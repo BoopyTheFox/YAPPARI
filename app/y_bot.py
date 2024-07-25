@@ -57,7 +57,6 @@ load_dotenv("y_secrets.env")
 BOT_OWNER = os.getenv("BOT_OWNER")
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-print(BOT_TOKEN)
 
 if not all([BOT_OWNER, BOT_TOKEN, OPENAI_API_KEY]):
     print("Please populate y_secrets.env with BOT_OWNER, BOT_TOKEN, OPENAI_API_KEY") 
