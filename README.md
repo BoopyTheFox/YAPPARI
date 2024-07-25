@@ -17,7 +17,7 @@ Functionality:
 	- temperature
 	- max_tokens
 	- max_history_tokens
-- Allowlisting buddies to share your both with
+- Allowlisting buddies to share your bot with
 
 ## Installation & setup
 ### Option 1 - docker
