@@ -1,0 +1,6 @@
+requests
+openai
+tiktoken
+youtube-transcript-api
+python_dotenv
+python-telegram-bot
