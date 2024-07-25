@@ -68,4 +68,4 @@ Navigate to it in Telegram --> `/start` --> `/help`
 
 ## Known issues
 - If you set it up with docker and it throws OpenAI errors - make sure docker's network is not routed through a network that 403's it
-- Since it's a polling bot, sometimes `getUpdates` from telegram gets stuck a bit (especially on an unstable network) - just resend message one more time
+- Since it's a polling bot, sometimes `getUpdates` from telegram gets stuck a bit (especially on an unstable network) - just resend your message/photo/youtube_link one more time
