@@ -24,12 +24,14 @@ Functionality:
 ```bash
 git clone https://github.com/BoopyTheFox/YAPPARI
 cd YAPPARI
+chmod 755 y_init_docker.sh
 ./y_init_docker.sh BOT_OWNER, BOT_TOKEN, OPENAI_API_KEY
 ```
 ### Option 2 - systemd service
 ```bash
 git clone https://github.com/BoopyTheFox/YAPPARI
 cd YAPPARI
+chmod 755 y_init_systemd.sh
 sudo ./y_init_systemd.sh BOT_OWNER, BOT_TOKEN, OPENAI_API_KEY
 ```
 >To quickly remove: `sudo ./y_init_systemd.sh --uninstall`
