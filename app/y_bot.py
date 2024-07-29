@@ -92,9 +92,9 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-###################
-## BOT_FUNCTIONS ##
-###################
+###########
+## START ##
+###########
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -114,7 +114,6 @@ I am just a wrapper for GPT, so i\'ll treat your messages as user prompts.\n\n\
     else: 
         pass
 
-## HELP ##
 
 async def help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     username = update.message.from_user.username.lower()
@@ -146,7 +145,7 @@ You can also put your questions in caption.
 /chats_list | /ls - list all saved chats
 
 ⚙️ Settings:
-/settings | /s - list all settings
+/settings | /ss - list all settings
 /setting <setting> <value> | /s <s> <v> - set a setting
 Available settings:
 prompt, model, temperature, max_tokens, max_history_tokens
@@ -163,7 +162,9 @@ prompt, model, temperature, max_tokens, max_history_tokens
             '''
             await update.message.reply_text(response_msg)
 
+########################
 ## HISTORY_MANAGEMENT ##
+########################
 
 async def chats_forget(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     chat_id = update.message.chat_id
@@ -201,8 +202,10 @@ async def chats_list(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
     else:
         await update.message.reply_text("🤷 No saved chats found.")
 
+######################
 ## USERS_MANAGEMENT ##
 ##   (owner only)   ##
+######################
 
 async def users_allow(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if update.message.from_user.username.lower() == BOT_OWNER.lower():
@@ -245,9 +248,11 @@ async def users_list(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
         allowed_users_list = '\n'.join(allowed_users)
         await update.message.reply_text(f"👀 Allowed users:\n{allowed_users_list}")
 
-## GPT_STUFF ##
+###################
+## GPT_FUNCTIONS ##
+###################
 
-MAX_MESSAGE_LENGTH = 4096 # Telegram requires to split large output
+SPLIT_MESSAGE_LENGTH = 4096 # Telegram's limit for 1 message
 
 
 async def gpt_logic(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -269,12 +274,12 @@ async def gpt_query(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         await context.bot.send_chat_action(chat_id=update.effective_chat.id, action=ChatAction.TYPING)
         try:
             response_msg = await GPT_query(chat_id, update.message.text)
-            for i in range(0, len(response_msg), MAX_MESSAGE_LENGTH):
+            for i in range(0, len(response_msg), SPLIT_MESSAGE_LENGTH):
                 try:
-                    await update.message.reply_text(response_msg[i:i + MAX_MESSAGE_LENGTH], parse_mode=ParseMode.MARKDOWN)
+                    await update.message.reply_text(response_msg[i:i + SPLIT_MESSAGE_LENGTH], parse_mode=ParseMode.MARKDOWN)
                 except BadRequest:
                     await update.message.reply_text("⚠️ GPT generated a message with improperly closed markdown. Telegram doesn't like that.\n\nMarkdown is disabled for next message.")
-                    await update.message.reply_text(response_msg[i:i + MAX_MESSAGE_LENGTH], parse_mode=ParseMode.HTML)
+                    await update.message.reply_text(response_msg[i:i + SPLIT_MESSAGE_LENGTH], parse_mode=ParseMode.HTML)
         except (openai.APIError, openai.RateLimitError):
             await update.message.reply_text("❌ OpenAI error. Try again? (also, better clear history)")
 
@@ -296,8 +301,8 @@ async def gpt_summarize(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 
         try:
             response_msg = await GPT_summarize(chat_id, video_link, questions)
-            for i in range(0, len(response_msg), MAX_MESSAGE_LENGTH):
-                await update.message.reply_text(response_msg[i:i + MAX_MESSAGE_LENGTH], parse_mode=ParseMode.MARKDOWN)
+            for i in range(0, len(response_msg), SPLIT_MESSAGE_LENGTH):
+                await update.message.reply_text(response_msg[i:i + SPLIT_MESSAGE_LENGTH], parse_mode=ParseMode.MARKDOWN)
         except (openai.APIError, openai.RateLimitError):
             await update.message.reply_text("❌ OpenAI error. Try again? (also, better clear history)")
 
@@ -328,10 +333,12 @@ async def gpt_recognize(update: Update, context: ContextTypes.DEFAULT_TYPE):
         
         response = await GPT_recognize(chat_id, base64_image, caption)
         response_msg = response.message.content
-        for i in range(0, len(response_msg), MAX_MESSAGE_LENGTH):
-            await update.message.reply_text(response_msg[i:i + MAX_MESSAGE_LENGTH], parse_mode=ParseMode.MARKDOWN)
+        for i in range(0, len(response_msg), SPLIT_MESSAGE_LENGTH):
+            await update.message.reply_text(response_msg[i:i + SPLIT_MESSAGE_LENGTH], parse_mode=ParseMode.MARKDOWN)
 
+##############
 ## SETTINGS ##
+##############
 
 async def settings_update(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     chat_id = update.message.chat_id
